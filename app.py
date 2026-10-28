@@ -151,6 +151,44 @@ footer { visibility: hidden; }
     stroke: currentColor !important;
     stroke-width: 2px !important;
 }
+
+/* Override Streamlit/BaseWeb theme accents on selected chips and the remove icon. */
+[data-testid="stSidebar"] [data-baseweb="tag"],
+[data-testid="stSidebar"] [data-baseweb="tag"][class],
+[data-testid="stSidebar"] [data-baseweb="tag"][style] {
+    background: #142B40 !important;
+    background-color: #142B40 !important;
+    border: 1px solid #36536F !important;
+    color: #EAF4FF !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] > span,
+[data-testid="stSidebar"] [data-baseweb="tag"] > div {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #DCEBFA !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"],
+[data-testid="stSidebar"] [data-baseweb="tag"] button,
+[data-testid="stSidebar"] [data-baseweb="tag"] [data-testid] {
+    background: #203A53 !important;
+    background-color: #203A53 !important;
+    border: 0 !important;
+    color: #91A9C2 !important;
+    border-radius: 50% !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"] svg,
+[data-testid="stSidebar"] [data-baseweb="tag"] button svg {
+    background: transparent !important;
+    color: #91A9C2 !important;
+    stroke: #91A9C2 !important;
+    fill: none !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"]:hover,
+[data-testid="stSidebar"] [data-baseweb="tag"] button:hover {
+    background: #294660 !important;
+    background-color: #294660 !important;
+    color: #36E4F5 !important;
+}
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] {
     background: linear-gradient(110deg, rgba(16,35,56,.98), rgba(12,27,44,.96));
