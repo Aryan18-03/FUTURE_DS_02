@@ -88,24 +88,35 @@ footer { visibility: hidden; }
     color: #36E4F5 !important;
     fill: currentColor !important;
 }
-/* Calm, premium multi-select chips: no harsh red fills or oversized remove marks. */
+/* Force a consistent cool-toned style on selected multi-select values and their remove controls.
+   BaseWeb can apply background styles to nested elements, so reset those too. */
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"],
 [data-testid="stSidebar"] [data-baseweb="tag"] {
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-    background: linear-gradient(135deg, rgba(77,141,255,.16), rgba(54,228,245,.08)) !important;
-    border: 1px solid rgba(111,164,211,.34) !important;
+    background: #142B40 !important;
+    background-color: #142B40 !important;
+    background-image: none !important;
+    border: 1px solid #36536F !important;
     border-radius: 999px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #EAF4FF !important;
     padding: 3px 7px 3px 10px !important;
     margin: 3px 4px 3px 0 !important;
-    box-shadow: none !important;
-    color: #EAF4FF !important;
 }
-[data-testid="stSidebar"] [data-baseweb="tag"] span {
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] *,
+[data-testid="stSidebar"] [data-baseweb="tag"] * {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
     color: #DCEBFA !important;
+}
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] span,
+[data-testid="stSidebar"] [data-baseweb="tag"] span {
     font-size: .82rem !important;
     font-weight: 550 !important;
 }
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] [role="button"],
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] button,
 [data-testid="stSidebar"] [data-baseweb="tag"] [role="button"],
 [data-testid="stSidebar"] [data-baseweb="tag"] button {
     display: inline-flex !important;
@@ -119,15 +130,19 @@ footer { visibility: hidden; }
     border: 0 !important;
     border-radius: 50% !important;
     background: rgba(145,169,194,.12) !important;
+    background-color: rgba(145,169,194,.12) !important;
     color: #91A9C2 !important;
     box-shadow: none !important;
-    transition: background .15s ease, color .15s ease !important;
 }
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] [role="button"]:hover,
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] button:hover,
 [data-testid="stSidebar"] [data-baseweb="tag"] [role="button"]:hover,
 [data-testid="stSidebar"] [data-baseweb="tag"] button:hover {
-    background: rgba(255,107,129,.16) !important;
-    color: #FF9BAA !important;
+    background: rgba(54,228,245,.16) !important;
+    background-color: rgba(54,228,245,.16) !important;
+    color: #36E4F5 !important;
 }
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] svg,
 [data-testid="stSidebar"] [data-baseweb="tag"] svg {
     width: 11px !important;
     height: 11px !important;
