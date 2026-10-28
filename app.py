@@ -54,140 +54,38 @@ footer { visibility: hidden; }
     border: 1px solid #36536F !important;
     border-radius: 9px !important;
 }
-/* Give each dropdown indicator a visible rounded-square button frame. */
-[data-testid="stSidebar"] [data-baseweb="select"] > div {
-    min-height: 42px !important;
+/* Power BI-style slicer buttons: compact, rounded, and cool-toned. */
+[data-testid="stPills"] button {
+    border-radius: 8px !important;
+    border: 1px solid #36536F !important;
     background: #102338 !important;
-    border: 1px solid #36536F !important;
-    border-radius: 9px !important;
-}
-[data-testid="stSidebar"] [data-baseweb="select"] [role="button"],
-[data-testid="stSidebar"] [data-baseweb="select"] > div > div:last-child {
-    align-self: center !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 28px !important;
-    min-width: 28px !important;
-    height: 28px !important;
-    margin: 0 6px 0 4px !important;
-    padding: 0 !important;
-    background: rgba(54,228,245,.10) !important;
-    border: 1px solid rgba(54,228,245,.65) !important;
-    border-radius: 7px !important;
-    box-sizing: border-box !important;
-}
-[data-testid="stSidebar"] [data-baseweb="select"] svg {
-    background: transparent !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 16px !important;
-    height: 16px !important;
-    color: #36E4F5 !important;
-    fill: currentColor !important;
-}
-/* Force a consistent cool-toned style on selected multi-select values and their remove controls.
-   BaseWeb can apply background styles to nested elements, so reset those too. */
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"],
-[data-testid="stSidebar"] [data-baseweb="tag"] {
-    background: #142B40 !important;
-    background-color: #142B40 !important;
-    background-image: none !important;
-    border: 1px solid #36536F !important;
-    border-radius: 999px !important;
-    box-shadow: none !important;
-    outline: none !important;
-    color: #EAF4FF !important;
-    padding: 3px 7px 3px 10px !important;
-    margin: 3px 4px 3px 0 !important;
-}
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] *,
-[data-testid="stSidebar"] [data-baseweb="tag"] * {
-    background-color: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
     color: #DCEBFA !important;
+    font-weight: 600 !important;
+    transition: all .15s ease !important;
 }
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] span,
-[data-testid="stSidebar"] [data-baseweb="tag"] span {
-    font-size: .82rem !important;
-    font-weight: 550 !important;
+[data-testid="stPills"] button:hover {
+    border-color: #36E4F5 !important;
+    color: #36E4F5 !important;
 }
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] [role="button"],
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] button,
-[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"],
-[data-testid="stSidebar"] [data-baseweb="tag"] button {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 19px !important;
-    min-width: 19px !important;
-    height: 19px !important;
-    padding: 0 !important;
-    margin-left: 2px !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background: rgba(145,169,194,.12) !important;
-    background-color: rgba(145,169,194,.12) !important;
-    color: #91A9C2 !important;
-    box-shadow: none !important;
-}
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] [role="button"]:hover,
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] button:hover,
-[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"]:hover,
-[data-testid="stSidebar"] [data-baseweb="tag"] button:hover {
+[data-testid="stPills"] button[aria-pressed="true"] {
     background: rgba(54,228,245,.16) !important;
-    background-color: rgba(54,228,245,.16) !important;
+    border: 1px solid #36E4F5 !important;
     color: #36E4F5 !important;
+    box-shadow: inset 0 0 0 1px rgba(54,228,245,.10) !important;
 }
-[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] svg,
-[data-testid="stSidebar"] [data-baseweb="tag"] svg {
-    width: 11px !important;
-    height: 11px !important;
-    color: currentColor !important;
-    fill: none !important;
-    stroke: currentColor !important;
-    stroke-width: 2px !important;
+.slicer-panel {
+    padding: 1rem 1.1rem .5rem 1.1rem;
+    margin: .6rem 0 1.1rem 0;
+    border: 1px solid rgba(54,228,245,.24);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(13,27,42,.96), rgba(10,25,41,.92));
 }
-
-/* Override Streamlit/BaseWeb theme accents on selected chips and the remove icon. */
-[data-testid="stSidebar"] [data-baseweb="tag"],
-[data-testid="stSidebar"] [data-baseweb="tag"][class],
-[data-testid="stSidebar"] [data-baseweb="tag"][style] {
-    background: #142B40 !important;
-    background-color: #142B40 !important;
-    border: 1px solid #36536F !important;
-    color: #EAF4FF !important;
-}
-[data-testid="stSidebar"] [data-baseweb="tag"] > span,
-[data-testid="stSidebar"] [data-baseweb="tag"] > div {
-    background: transparent !important;
-    background-color: transparent !important;
-    color: #DCEBFA !important;
-}
-[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"],
-[data-testid="stSidebar"] [data-baseweb="tag"] button,
-[data-testid="stSidebar"] [data-baseweb="tag"] [data-testid] {
-    background: #203A53 !important;
-    background-color: #203A53 !important;
-    border: 0 !important;
-    color: #91A9C2 !important;
-    border-radius: 50% !important;
-}
-[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"] svg,
-[data-testid="stSidebar"] [data-baseweb="tag"] button svg {
-    background: transparent !important;
-    color: #91A9C2 !important;
-    stroke: #91A9C2 !important;
-    fill: none !important;
-}
-[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"]:hover,
-[data-testid="stSidebar"] [data-baseweb="tag"] button:hover {
-    background: #294660 !important;
-    background-color: #294660 !important;
-    color: #36E4F5 !important;
+.slicer-heading {
+    color: #36E4F5;
+    font-size: .74rem;
+    font-weight: 850;
+    letter-spacing: .15em;
+    margin-bottom: .5rem;
 }
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] {
@@ -368,44 +266,40 @@ def reset_filters():
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Open a dropdown to select multiple options. Leave a filter empty to include all values.")
+st.sidebar.caption("Use the slicer buttons above the dashboard to select one or more values.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-selected_contract = st.sidebar.multiselect(
-    "Contract type",
-    options=contract_options,
-    default=[],
-    placeholder="Choose contract types",
-    key="contract_filter",
-)
-selected_internet = st.sidebar.multiselect(
-    "Internet service",
-    options=internet_options,
-    default=[],
-    placeholder="Choose internet services",
-    key="internet_filter",
-)
-selected_payment = st.sidebar.multiselect(
-    "Payment method",
-    options=payment_options,
-    default=[],
-    placeholder="Choose payment methods",
-    key="payment_filter",
-)
-selected_senior = st.sidebar.multiselect(
-    "Customer profile",
-    options=senior_options,
-    default=[],
-    placeholder="Choose customer profiles",
-    key="senior_filter",
-)
-tenure_range = st.sidebar.slider(
+# Power BI-style slicers: visible selectable buttons instead of dropdown chips.
+st.markdown('<div class="slicer-panel"><div class="slicer-heading">INTERACTIVE SLICERS</div>', unsafe_allow_html=True)
+slicer_row1 = st.columns([1, 1, 1, 1], gap="medium")
+with slicer_row1[0]:
+    selected_contract = st.pills(
+        "Contract type", options=contract_options, selection_mode="multi",
+        default=st.session_state.get("contract_filter", []), key="contract_filter",
+    )
+with slicer_row1[1]:
+    selected_internet = st.pills(
+        "Internet service", options=internet_options, selection_mode="multi",
+        default=st.session_state.get("internet_filter", []), key="internet_filter",
+    )
+with slicer_row1[2]:
+    selected_payment = st.pills(
+        "Payment method", options=payment_options, selection_mode="multi",
+        default=st.session_state.get("payment_filter", []), key="payment_filter",
+    )
+with slicer_row1[3]:
+    selected_senior = st.pills(
+        "Customer profile", options=senior_options, selection_mode="multi",
+        default=st.session_state.get("senior_filter", []), key="senior_filter",
+    )
+tenure_range = st.slider(
     "Customer tenure (months)",
     min_value=min_tenure,
     max_value=max_tenure,
-    value=(min_tenure, max_tenure),
+    value=st.session_state.get("tenure_filter", (min_tenure, max_tenure)),
     key="tenure_filter",
 )
+st.markdown('</div>', unsafe_allow_html=True)
 
 filtered_df = df.copy()
 if selected_contract:
