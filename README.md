@@ -12,7 +12,7 @@
 
 ## 🚀 Live Dashboard
 
-🔗 **[View Interactive Customer Churn Dashboard]((https://futureds02-fspddyqyn24796tatf2wuf.streamlit.app/))**
+🔗https://futureds02-fspddyqyn24796tatf2wuf.streamlit.app/
 
 Explore customer churn patterns, retention metrics, contract types, payment methods, and other key business insights through an interactive dashboard.
 
