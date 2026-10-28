@@ -222,42 +222,45 @@ if missing_columns:
     st.error(f"The dataset is missing these columns: {missing_columns}")
     st.stop()
 
-# Compact sidebar filters: searchable multi-selects keep the controls short and easy to use.
+# Consistent compact dropdown filters, matching the Customer profile control.
 contract_options = sorted(df["Contract"].dropna().unique().tolist())
 internet_options = sorted(df["InternetService"].dropna().unique().tolist())
 payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
+contract_choices = ["All contract types"] + contract_options
+internet_choices = ["All internet services"] + internet_options
+payment_choices = ["All payment methods"] + payment_options
 senior_options = ["All customers", "Senior citizens", "Non-senior citizens"]
 min_tenure = int(df["tenure"].min())
 max_tenure = int(df["tenure"].max())
 
 def reset_filters():
-    st.session_state["contract_filter"] = contract_options
-    st.session_state["internet_filter"] = internet_options
-    st.session_state["payment_filter"] = payment_options
+    st.session_state["contract_filter"] = "All contract types"
+    st.session_state["internet_filter"] = "All internet services"
+    st.session_state["payment_filter"] = "All payment methods"
     st.session_state["senior_filter"] = "All customers"
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Choose options from the dropdowns. Leave all selected to include everyone.")
+st.sidebar.caption("Choose one option in each dropdown, or keep the default to include everyone.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-selected_contracts = st.sidebar.multiselect(
+selected_contract = st.sidebar.selectbox(
     "Contract type",
-    options=contract_options,
-    default=contract_options,
+    options=contract_choices,
+    index=0,
     key="contract_filter",
 )
-selected_internet = st.sidebar.multiselect(
+selected_internet = st.sidebar.selectbox(
     "Internet service",
-    options=internet_options,
-    default=internet_options,
+    options=internet_choices,
+    index=0,
     key="internet_filter",
 )
-selected_payments = st.sidebar.multiselect(
+selected_payment = st.sidebar.selectbox(
     "Payment method",
-    options=payment_options,
-    default=payment_options,
+    options=payment_choices,
+    index=0,
     key="payment_filter",
 )
 selected_senior = st.sidebar.selectbox(
@@ -274,11 +277,15 @@ tenure_range = st.sidebar.slider(
     key="tenure_filter",
 )
 
-filtered_df = df[
-    df["Contract"].isin(selected_contracts)
-    & df["InternetService"].isin(selected_internet)
-    & df["PaymentMethod"].isin(selected_payments)
-    & df["tenure"].between(tenure_range[0], tenure_range[1])
+filtered_df = df.copy()
+if selected_contract != "All contract types":
+    filtered_df = filtered_df[filtered_df["Contract"] == selected_contract].copy()
+if selected_internet != "All internet services":
+    filtered_df = filtered_df[filtered_df["InternetService"] == selected_internet].copy()
+if selected_payment != "All payment methods":
+    filtered_df = filtered_df[filtered_df["PaymentMethod"] == selected_payment].copy()
+filtered_df = filtered_df[
+    filtered_df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
 if selected_senior == "Senior citizens":
     filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 1].copy()
