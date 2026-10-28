@@ -32,7 +32,11 @@ st.markdown("""
       var(--bg);
     color: var(--text);
 }
-[data-testid="stHeader"] { background: rgba(7,17,31,.88); }
+[data-testid="stHeader"] { display: none !important; height: 0 !important; }
+[data-testid="stToolbar"] { display: none !important; }
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+.block-container { padding-top: .8rem !important; }
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0B1B2B 0%, #091522 100%);
     border-right: 1px solid var(--line);
@@ -223,8 +227,8 @@ def style_chart(fig, height=350):
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
-        margin=dict(l=14, r=14, t=62, b=24),
-        title=dict(font=dict(size=15, color="#EAF4FF"), x=0.02),
+        margin=dict(l=14, r=14, t=76, b=28),
+        title=dict(font=dict(size=14, color="#36E4F5", family="Arial Black"), x=0.02, pad=dict(b=10)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
             yanchor="bottom", y=1.02, xanchor="left", x=0
@@ -248,14 +252,14 @@ with left:
     fig = px.bar(
         churn_summary, x="Churn", y="Customers", color="Churn",
         color_discrete_map=CHURN_COLORS, text="Customers",
-        title="Retained vs. churned customers"
+        title="CHURN ANALYSIS · Retained vs. churned customers"
     )
     fig.update_traces(textposition="outside", cliponaxis=False)
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
     fig = px.pie(
         churn_summary, names="Churn", values="Customers", hole=.66,
-        color="Churn", color_discrete_map=CHURN_COLORS, title="Share of customers"
+        color="Churn", color_discrete_map=CHURN_COLORS, title="CHURN ANALYSIS · Share of customers"
     )
     fig.update_traces(textinfo="percent+label", marker=dict(line=dict(color="#0D1B2A", width=3)))
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
@@ -271,7 +275,7 @@ with left:
     fig = px.bar(
         contract_summary, x="Contract", y="Customers", color="Churn",
         barmode="group", color_discrete_map=CHURN_COLORS,
-        title="Customer count by contract"
+        title="CHURN ANALYSIS · Customer count by contract"
     )
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
@@ -285,7 +289,7 @@ with right:
         contract_rate, x="Contract", y="Churn Rate (%)",
         text=contract_rate["Churn Rate (%)"].map(lambda x: f"{x:.1f}%"),
         color="Churn Rate (%)", color_continuous_scale=["#36E4F5", "#4D8DFF", "#FF6B81"],
-        title="Churn rate by contract", hover_data=["Customers", "Churned"]
+        title="CHURN ANALYSIS · Churn rate by contract", hover_data=["Customers", "Churned"]
     )
     fig.update_traces(textposition="outside", cliponaxis=False)
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
@@ -295,7 +299,7 @@ with left:
     fig = px.box(
         filtered_df, x="Churn", y="tenure", color="Churn",
         color_discrete_map=CHURN_COLORS, points="outliers",
-        title="Tenure by churn status"
+        title="CHURN ANALYSIS · Tenure by churn status"
     )
     fig.update_yaxes(title="Tenure (months)")
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
@@ -303,7 +307,7 @@ with right:
     fig = px.box(
         filtered_df, x="Churn", y="MonthlyCharges", color="Churn",
         color_discrete_map=CHURN_COLORS, points="outliers",
-        title="Monthly charges by churn status"
+        title="CHURN ANALYSIS · Monthly charges by churn status"
     )
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
@@ -316,7 +320,7 @@ with left:
     fig = px.bar(
         payment_summary, x="PaymentMethod", y="Customers", color="Churn",
         barmode="group", color_discrete_map=CHURN_COLORS,
-        title="Churn by payment method"
+        title="CHURN ANALYSIS · Churn by payment method"
     )
     fig.update_xaxes(tickangle=-25)
     st.plotly_chart(style_chart(fig, 390), use_container_width=True, config={"displayModeBar": False, "responsive": True})
@@ -328,7 +332,7 @@ with right:
     fig = px.bar(
         internet_summary, x="InternetService", y="Customers", color="Churn",
         barmode="group", color_discrete_map=CHURN_COLORS,
-        title="Churn by internet service"
+        title="CHURN ANALYSIS · Churn by internet service"
     )
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
