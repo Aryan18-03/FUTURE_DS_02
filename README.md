@@ -120,7 +120,7 @@ I'm developing practical skills in Python, SQL, Excel, Power BI, Tableau, and da
 This project is part of my Data Science & Analytics learning journey with Future Interns.
 
 ## 🔗 Connect With Me
-- 💼 **LinkedIn:** https://www.linkedin.com/in/aryan-data-analyst
+- 💼 **LinkedIn:** https://www.linkedin.com/in/aryan-data-analyst183/
 - 🐙 **GitHub:** https://github.com/Aryan18-03
 
 ⭐ If you find this project useful, consider giving the repository a star!
