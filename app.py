@@ -54,14 +54,39 @@ footer { visibility: hidden; }
     border: 1px solid #36536F !important;
     border-radius: 9px !important;
 }
-/* Give the dropdown arrow its own rounded-square frame. */
-[data-testid="stSidebar"] [data-baseweb="select"] svg {
+/* Give each dropdown indicator a visible rounded-square button frame. */
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    min-height: 42px !important;
+    background: #102338 !important;
+    border: 1px solid #36536F !important;
+    border-radius: 9px !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] [role="button"],
+[data-testid="stSidebar"] [data-baseweb="select"] > div > div:last-child {
+    align-self: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    margin: 0 6px 0 4px !important;
+    padding: 0 !important;
     background: rgba(54,228,245,.10) !important;
-    border: 1px solid rgba(54,228,245,.45) !important;
-    border-radius: 6px !important;
-    padding: 3px !important;
-    box-sizing: content-box !important;
-    margin-right: 5px !important;
+    border: 1px solid rgba(54,228,245,.65) !important;
+    border-radius: 7px !important;
+    box-sizing: border-box !important;
+}
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 16px !important;
+    height: 16px !important;
+    color: #36E4F5 !important;
+    fill: currentColor !important;
 }
 [data-testid="stSidebar"] [data-baseweb="tag"] {
     background: rgba(54,228,245,.18) !important;
