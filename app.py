@@ -88,12 +88,54 @@ footer { visibility: hidden; }
     color: #36E4F5 !important;
     fill: currentColor !important;
 }
+/* Calm, premium multi-select chips: no harsh red fills or oversized remove marks. */
 [data-testid="stSidebar"] [data-baseweb="tag"] {
-    background: rgba(54,228,245,.18) !important;
-    border: 1px solid rgba(54,228,245,.4) !important;
-    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    background: linear-gradient(135deg, rgba(77,141,255,.16), rgba(54,228,245,.08)) !important;
+    border: 1px solid rgba(111,164,211,.34) !important;
+    border-radius: 999px !important;
+    padding: 3px 7px 3px 10px !important;
+    margin: 3px 4px 3px 0 !important;
+    box-shadow: none !important;
+    color: #EAF4FF !important;
 }
-[data-testid="stSidebar"] [data-baseweb="tag"] span { color: #EAF4FF !important; }
+[data-testid="stSidebar"] [data-baseweb="tag"] span {
+    color: #DCEBFA !important;
+    font-size: .82rem !important;
+    font-weight: 550 !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"],
+[data-testid="stSidebar"] [data-baseweb="tag"] button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 19px !important;
+    min-width: 19px !important;
+    height: 19px !important;
+    padding: 0 !important;
+    margin-left: 2px !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(145,169,194,.12) !important;
+    color: #91A9C2 !important;
+    box-shadow: none !important;
+    transition: background .15s ease, color .15s ease !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] [role="button"]:hover,
+[data-testid="stSidebar"] [data-baseweb="tag"] button:hover {
+    background: rgba(255,107,129,.16) !important;
+    color: #FF9BAA !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] svg {
+    width: 11px !important;
+    height: 11px !important;
+    color: currentColor !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2px !important;
+}
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] {
     background: linear-gradient(110deg, rgba(16,35,56,.98), rgba(12,27,44,.96));
