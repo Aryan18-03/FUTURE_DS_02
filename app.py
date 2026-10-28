@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(
-    page_title="Churn Intelligence | Future Interns",
+    page_title="Customer Retention and Churn Analysis",
     page_icon="📡",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -120,7 +120,7 @@ hr { border-color: var(--line); }
 st.markdown("""
 <div class="hero">
   <div class="eyebrow">Customer intelligence / retention signals</div>
-  <h1>📡 Churn Intelligence Dashboard</h1>
+  <h1>Customer Retention and Churn Analysis</h1>
   <p class="hero-sub">Spot retention risks, explore customer segments, and turn churn patterns into practical actions.</p>
 </div>
 """, unsafe_allow_html=True)
