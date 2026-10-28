@@ -256,51 +256,52 @@ if missing_columns:
     st.error(f"The dataset is missing these columns: {missing_columns}")
     st.stop()
 
-# Consistent compact dropdown filters, matching the Customer profile control.
+# Multi-select dropdown filters: choose one or more values, or leave blank for all.
 contract_options = sorted(df["Contract"].dropna().unique().tolist())
 internet_options = sorted(df["InternetService"].dropna().unique().tolist())
 payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
-contract_choices = ["All contract types"] + contract_options
-internet_choices = ["All internet services"] + internet_options
-payment_choices = ["All payment methods"] + payment_options
-senior_options = ["All customers", "Senior citizens", "Non-senior citizens"]
+senior_options = ["Senior citizens", "Non-senior citizens"]
 min_tenure = int(df["tenure"].min())
 max_tenure = int(df["tenure"].max())
 
 def reset_filters():
-    st.session_state["contract_filter"] = "All contract types"
-    st.session_state["internet_filter"] = "All internet services"
-    st.session_state["payment_filter"] = "All payment methods"
-    st.session_state["senior_filter"] = "All customers"
+    st.session_state["contract_filter"] = []
+    st.session_state["internet_filter"] = []
+    st.session_state["payment_filter"] = []
+    st.session_state["senior_filter"] = []
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Choose one option in each dropdown, or keep the default to include everyone.")
+st.sidebar.caption("Open a dropdown to select multiple options. Leave a filter empty to include all values.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-selected_contract = st.sidebar.selectbox(
+selected_contract = st.sidebar.multiselect(
     "Contract type",
-    options=contract_choices,
-    index=0,
+    options=contract_options,
+    default=[],
+    placeholder="Choose contract types",
     key="contract_filter",
 )
-selected_internet = st.sidebar.selectbox(
+selected_internet = st.sidebar.multiselect(
     "Internet service",
-    options=internet_choices,
-    index=0,
+    options=internet_options,
+    default=[],
+    placeholder="Choose internet services",
     key="internet_filter",
 )
-selected_payment = st.sidebar.selectbox(
+selected_payment = st.sidebar.multiselect(
     "Payment method",
-    options=payment_choices,
-    index=0,
+    options=payment_options,
+    default=[],
+    placeholder="Choose payment methods",
     key="payment_filter",
 )
-selected_senior = st.sidebar.selectbox(
+selected_senior = st.sidebar.multiselect(
     "Customer profile",
     options=senior_options,
-    index=0,
+    default=[],
+    placeholder="Choose customer profiles",
     key="senior_filter",
 )
 tenure_range = st.sidebar.slider(
@@ -312,19 +313,23 @@ tenure_range = st.sidebar.slider(
 )
 
 filtered_df = df.copy()
-if selected_contract != "All contract types":
-    filtered_df = filtered_df[filtered_df["Contract"] == selected_contract].copy()
-if selected_internet != "All internet services":
-    filtered_df = filtered_df[filtered_df["InternetService"] == selected_internet].copy()
-if selected_payment != "All payment methods":
-    filtered_df = filtered_df[filtered_df["PaymentMethod"] == selected_payment].copy()
+if selected_contract:
+    filtered_df = filtered_df[filtered_df["Contract"].isin(selected_contract)].copy()
+if selected_internet:
+    filtered_df = filtered_df[filtered_df["InternetService"].isin(selected_internet)].copy()
+if selected_payment:
+    filtered_df = filtered_df[filtered_df["PaymentMethod"].isin(selected_payment)].copy()
 filtered_df = filtered_df[
     filtered_df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
-if selected_senior == "Senior citizens":
-    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 1].copy()
-elif selected_senior == "Non-senior citizens":
-    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 0].copy()
+if selected_senior:
+    senior_mask = (
+        (filtered_df["SeniorCitizen"] == 1) if "Senior citizens" in selected_senior else False
+    )
+    non_senior_mask = (
+        (filtered_df["SeniorCitizen"] == 0) if "Non-senior citizens" in selected_senior else False
+    )
+    filtered_df = filtered_df[senior_mask | non_senior_mask].copy()
 
 total_customers = len(filtered_df)
 churned_customers = int((filtered_df["Churn"] == "Yes").sum())
