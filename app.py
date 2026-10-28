@@ -364,8 +364,19 @@ with right:
         churn_summary, names="Churn", values="Customers", hole=.58,
         color="Churn", color_discrete_map=CHURN_COLORS, title="Share of customers"
     )
-    fig.update_traces(textinfo="label+percent", textposition="outside", textfont=dict(size=14, color="#FFFFFF"), automargin=True, marker=dict(line=dict(color="#0D1B2A", width=3)), pull=[0, 0.04])
-    st.plotly_chart(style_chart(fig, 420), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    fig.update_traces(
+        textinfo="label+percent",
+        textposition="outside",
+        textfont=dict(size=13, color="#FFFFFF"),
+        automargin=True,
+        marker=dict(line=dict(color="#0D1B2A", width=3)),
+        pull=[0, 0.04],
+    )
+    fig.update_layout(
+        showlegend=False,
+        margin=dict(l=42, r=42, t=68, b=28),
+    )
+    st.plotly_chart(style_chart(fig, 460), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
 st.markdown("---")
 st.subheader("02 / Risk signals")
