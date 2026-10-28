@@ -54,6 +54,15 @@ footer { visibility: hidden; }
     border: 1px solid #36536F !important;
     border-radius: 9px !important;
 }
+/* Give the dropdown arrow its own rounded-square frame. */
+[data-testid="stSidebar"] [data-baseweb="select"] svg {
+    background: rgba(54,228,245,.10) !important;
+    border: 1px solid rgba(54,228,245,.45) !important;
+    border-radius: 6px !important;
+    padding: 3px !important;
+    box-sizing: content-box !important;
+    margin-right: 5px !important;
+}
 [data-testid="stSidebar"] [data-baseweb="tag"] {
     background: rgba(54,228,245,.18) !important;
     border: 1px solid rgba(54,228,245,.4) !important;
