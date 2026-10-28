@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(
-    page_title="📊 Customer Retention & Churn Analysis",
+    page_title="📊Customer Retention & Churn Analysis",
     page_icon="📡",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -54,7 +54,7 @@ footer { visibility: hidden; }
 [data-testid="stSidebar"] * { color: var(--text); }
 .block-container { padding-top: 1.5rem; padding-bottom: 2.5rem; max-width: 1500px; }
 h1, h2, h3 { color: var(--text) !important; letter-spacing: -.025em; }
-h1 { font-weight: 800 !important; }
+h1 { font-weight: 800 !important; }\n[data-testid="stPlotlyChart"] iframe { overflow: hidden !important; }\n[data-testid="stPlotlyChart"] { overflow: visible !important; }\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { font-size: .95rem !important; font-weight: 800 !important; color: #EAF4FF !important; }\n[data-testid="stSidebar"] [data-baseweb="select"] { min-height: 42px; }
 p, label, .stMarkdown { color: var(--text); }
 [data-testid="stMetric"] {
     background: linear-gradient(145deg, rgba(16,35,56,.98), rgba(10,25,41,.98));
@@ -65,8 +65,8 @@ p, label, .stMarkdown { color: var(--text); }
     box-shadow: 0 8px 28px rgba(0,0,0,.14);
     min-height: 112px;
 }
-[data-testid="stMetricLabel"] { color: var(--muted) !important; font-size: 1rem !important; font-weight: 750 !important; }
-[data-testid="stMetricValue"] { color: var(--cyan) !important; font-weight: 800; }
+[data-testid="stMetricLabel"] { color: #C7D8EA !important; font-size: 1.12rem !important; font-weight: 800 !important; }
+[data-testid="stMetricValue"] { color: var(--cyan) !important; font-size: 1.85rem !important; font-weight: 850 !important; }
 [data-testid="stMetricDelta"] { font-size: .8rem; }
 div[data-testid="stPlotlyChart"] {
     background: rgba(13,27,42,.74);
@@ -220,7 +220,7 @@ churn_rate = churned_customers / total_customers * 100 if total_customers else 0
 retention_rate = retained_customers / total_customers * 100 if total_customers else 0
 avg_monthly_charges = filtered_df["MonthlyCharges"].mean() if total_customers else 0
 
-st.subheader("📈 Key Performance Indicators (KPIs)")
+st.subheader("📈 Customer Retention Performance KPIs")
 k1, k2, k3, k4, k5 = st.columns(5)
 k1.metric("Customers in view", f"{total_customers:,}")
 k2.metric("Churned customers", f"{churned_customers:,}")
@@ -241,7 +241,7 @@ def style_chart(fig, height=350):
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
         margin=dict(l=14, r=14, t=76, b=28),
-        title=dict(font=dict(size=15, color="#EAF4FF", family="Arial"), x=0.02, pad=dict(b=10)),
+        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, pad=dict(b=10)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
             yanchor="bottom", y=1.02, xanchor="left", x=0
@@ -333,10 +333,10 @@ with left:
     fig = px.bar(
         payment_summary, x="PaymentMethod", y="Customers", color="Churn",
         barmode="group", color_discrete_map=CHURN_COLORS,
-        title="Churn by payment method"
+        title="Customers by payment method and churn status"
     )
     fig.update_xaxes(tickangle=-25)
-    st.plotly_chart(style_chart(fig, 390), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    st.plotly_chart(style_chart(fig, 430), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
     internet_summary = (
         filtered_df.groupby(["InternetService", "Churn"], observed=False).size()
@@ -345,7 +345,7 @@ with right:
     fig = px.bar(
         internet_summary, x="InternetService", y="Customers", color="Churn",
         barmode="group", color_discrete_map=CHURN_COLORS,
-        title="Churn by internet service"
+        title="Customers by internet service and churn status"
     )
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
