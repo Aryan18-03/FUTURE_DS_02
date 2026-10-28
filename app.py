@@ -372,19 +372,20 @@ with right:
         marker=dict(line=dict(color="#0D1B2A", width=3)),
         pull=[0, 0.04],
     )
+    fig = style_chart(fig, 490)
     fig.update_layout(
         showlegend=True,
         legend=dict(
             bgcolor="rgba(0,0,0,0)",
             orientation="h",
-            yanchor="bottom", y=1.02,
-            xanchor="right", x=1,
+            yanchor="bottom", y=1.16,
+            xanchor="center", x=0.5,
             title_text="",
             font=dict(size=11, color="#FFFFFF"),
         ),
-        margin=dict(l=42, r=42, t=90, b=28),
+        margin=dict(l=42, r=42, t=112, b=42),
     )
-    st.plotly_chart(style_chart(fig, 460), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
 st.markdown("---")
 st.subheader("02 / Risk signals")
