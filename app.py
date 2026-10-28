@@ -61,6 +61,22 @@ footer { visibility: hidden; }
 }
 [data-testid="stSidebar"] [data-baseweb="tag"] span { color: #EAF4FF !important; }
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
+[data-testid="stSidebar"] [data-testid="stCheckbox"] {
+    background: rgba(16,35,56,.62);
+    border: 1px solid rgba(77,141,255,.20);
+    border-radius: 8px;
+    padding: .18rem .5rem;
+    margin: .12rem 0;
+}
+[data-testid="stSidebar"] [data-testid="stCheckbox"] label {
+    align-items: center;
+    gap: .55rem;
+}
+[data-testid="stSidebar"] [data-testid="stCheckbox"] p {
+    font-size: .9rem !important;
+    font-weight: 550 !important;
+    color: #DCEBFA !important;
+}
 [data-testid="stSidebar"] [data-testid="stSelectbox"],
 [data-testid="stSidebar"] [data-testid="stMultiSelect"] { margin-bottom: .35rem; }
 [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color: #EAF4FF !important; font-size: .95rem !important; font-weight: 800 !important; }
@@ -200,9 +216,12 @@ min_tenure = int(df["tenure"].min())
 max_tenure = int(df["tenure"].max())
 
 def reset_filters():
-    st.session_state["contract_filter"] = contract_options
-    st.session_state["internet_filter"] = internet_options
-    st.session_state["payment_filter"] = payment_options
+    for option in contract_options:
+        st.session_state[f"contract_choice_{option}"] = True
+    for option in internet_options:
+        st.session_state[f"internet_choice_{option}"] = True
+    for option in payment_options:
+        st.session_state[f"payment_choice_{option}"] = True
     st.session_state["senior_filter"] = "All customers"
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
@@ -214,10 +233,27 @@ st.sidebar.button("↺  Reset all filters", on_click=reset_filters, use_containe
 st.sidebar.markdown('</div>', unsafe_allow_html=True)
 st.sidebar.markdown("---")
 with st.sidebar.expander("▦  Contract & service", expanded=True):
-    selected_contracts = st.multiselect("Contract type", contract_options, default=contract_options, key="contract_filter")
-    selected_internet = st.multiselect("Internet service", internet_options, default=internet_options, key="internet_filter")
+    st.markdown("**Contract type**")
+    contract_checks = {
+        option: st.checkbox(option, value=True, key=f"contract_choice_{option}")
+        for option in contract_options
+    }
+    selected_contracts = [option for option, checked in contract_checks.items() if checked]
+
+    st.markdown("**Internet service**")
+    internet_checks = {
+        option: st.checkbox(option, value=True, key=f"internet_choice_{option}")
+        for option in internet_options
+    }
+    selected_internet = [option for option, checked in internet_checks.items() if checked]
+
 with st.sidebar.expander("◈  Billing & customer profile", expanded=True):
-    selected_payments = st.multiselect("Payment method", payment_options, default=payment_options, key="payment_filter")
+    st.markdown("**Payment method**")
+    payment_checks = {
+        option: st.checkbox(option, value=True, key=f"payment_choice_{option}")
+        for option in payment_options
+    }
+    selected_payments = [option for option, checked in payment_checks.items() if checked]
     selected_senior = st.selectbox("Customer profile", senior_options, index=0, key="senior_filter")
 with st.sidebar.expander("◷  Customer tenure", expanded=True):
     tenure_range = st.slider("Tenure range (months)", min_tenure, max_tenure, (min_tenure, max_tenure), key="tenure_filter")
@@ -254,7 +290,7 @@ if filtered_df.empty:
     st.warning("No customers match the selected filters. Widen one or more filters to continue.")
     st.stop()
 
-def style_chart(fig, height=350):
+def style_chart(fig, height=420):
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -262,11 +298,11 @@ def style_chart(fig, height=350):
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
         autosize=True,
-        margin=dict(l=18, r=18, t=105, b=45),
-        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=0.99, xanchor="left", yanchor="top", pad=dict(b=18)),
+        margin=dict(l=18, r=18, t=68, b=42),
+        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=1.12, xanchor="left", yanchor="top", pad=dict(b=0)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
-            yanchor="bottom", y=1.01, xanchor="right", x=1,
+            yanchor="top", y=1.04, xanchor="right", x=1,
             title_text=""
         ),
         hoverlabel=dict(bgcolor="#102338", font_color="#EAF4FF"),
@@ -358,7 +394,7 @@ with left:
         title="Customers by payment method and churn status"
     )
     fig.update_xaxes(tickangle=-25)
-    st.plotly_chart(style_chart(fig, 460), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    st.plotly_chart(style_chart(fig, 440), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
     internet_summary = (
         filtered_df.groupby(["InternetService", "Churn"], observed=False).size()
