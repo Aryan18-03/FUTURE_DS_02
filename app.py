@@ -62,11 +62,19 @@ footer { visibility: hidden; }
 [data-testid="stSidebar"] [data-baseweb="tag"] span { color: #EAF4FF !important; }
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] {
-    background: rgba(16,35,56,.62);
-    border: 1px solid rgba(77,141,255,.20);
-    border-radius: 8px;
-    padding: .18rem .5rem;
-    margin: .12rem 0;
+    background: linear-gradient(110deg, rgba(16,35,56,.98), rgba(12,27,44,.96));
+    border: 1px solid rgba(54,228,245,.24);
+    border-radius: 9px;
+    padding: .30rem .55rem;
+    margin: .18rem 0;
+    transition: border-color .15s ease, background .15s ease;
+}
+[data-testid="stSidebar"] [data-testid="stCheckbox"]:hover {
+    border-color: rgba(54,228,245,.7);
+    background: rgba(20,45,67,.98);
+}
+[data-testid="stSidebar"] [data-testid="stCheckbox"] input {
+    accent-color: #36E4F5;
 }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] label {
     align-items: center;
@@ -87,7 +95,7 @@ footer { visibility: hidden; }
 h1, h2, h3 { color: var(--text) !important; letter-spacing: -.025em; }
 h1 { font-weight: 800 !important; }
 [data-testid="stPlotlyChart"] iframe { overflow: hidden !important; }
-[data-testid="stPlotlyChart"] { overflow: visible !important; }
+[data-testid="stPlotlyChart"] { overflow: hidden !important; }
 [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { font-size: .95rem !important; font-weight: 800 !important; color: #EAF4FF !important; }
 [data-testid="stSidebar"] [data-baseweb="select"] { min-height: 42px; }
 p, label, .stMarkdown { color: var(--text); }
@@ -107,7 +115,14 @@ div[data-testid="stPlotlyChart"] {
     background: rgba(13,27,42,.74);
     border: 1px solid var(--line);
     border-radius: 15px;
-    padding: .35rem;
+    padding: .15rem;
+    overflow: hidden !important;
+}
+div[data-testid="stPlotlyChart"] > div,
+div[data-testid="stPlotlyChart"] iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 0 !important;
 }
 div[data-testid="stVerticalBlockBorderWrapper"] {
     border-color: var(--line) !important;
@@ -290,7 +305,7 @@ if filtered_df.empty:
     st.warning("No customers match the selected filters. Widen one or more filters to continue.")
     st.stop()
 
-def style_chart(fig, height=420):
+def style_chart(fig, height=390):
     fig.update_layout(
         template="plotly_dark",
         paper_bgcolor="rgba(0,0,0,0)",
@@ -298,12 +313,12 @@ def style_chart(fig, height=420):
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
         autosize=True,
-        margin=dict(l=18, r=18, t=68, b=42),
-        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=1.12, xanchor="left", yanchor="top", pad=dict(b=0)),
+        margin=dict(l=16, r=16, t=78, b=38),
+        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=0.98, xanchor="left", yanchor="top", pad=dict(b=0)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
-            yanchor="top", y=1.04, xanchor="right", x=1,
-            title_text=""
+            yanchor="top", y=0.90, xanchor="right", x=1,
+            title_text="", font=dict(size=10)
         ),
         hoverlabel=dict(bgcolor="#102338", font_color="#EAF4FF"),
     )
