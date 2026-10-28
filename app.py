@@ -47,14 +47,33 @@ footer { visibility: hidden; }
     border-radius: 14px !important;
     margin-bottom: .55rem;
 }
-[data-testid="stSidebar"] [data-testid="stExpander"] summary { font-weight: 750; }
-[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color: #A8C5E0 !important; font-size: .9rem; font-weight: 700; }
+[data-testid="stSidebar"] [data-testid="stExpander"] summary { font-weight: 800; color: #FFFFFF !important; }
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    min-height: 42px !important;
+    background: #102338 !important;
+    border: 1px solid #36536F !important;
+    border-radius: 9px !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] {
+    background: rgba(54,228,245,.18) !important;
+    border: 1px solid rgba(54,228,245,.4) !important;
+    border-radius: 6px !important;
+}
+[data-testid="stSidebar"] [data-baseweb="tag"] span { color: #EAF4FF !important; }
+[data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
+[data-testid="stSidebar"] [data-testid="stSelectbox"],
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] { margin-bottom: .35rem; }
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color: #EAF4FF !important; font-size: .95rem !important; font-weight: 800 !important; }
 .sidebar-kicker { color: var(--cyan); font-size: .72rem; font-weight: 850; letter-spacing: .16em; }
 .sidebar-reset button { min-height: 44px; background: linear-gradient(100deg, rgba(54,228,245,.22), rgba(167,139,250,.20)); border: 1px solid rgba(54,228,245,.65); box-shadow: 0 5px 18px rgba(54,228,245,.09); }
 [data-testid="stSidebar"] * { color: var(--text); }
 .block-container { padding-top: 1.5rem; padding-bottom: 2.5rem; max-width: 1500px; }
 h1, h2, h3 { color: var(--text) !important; letter-spacing: -.025em; }
-h1 { font-weight: 800 !important; }\n[data-testid="stPlotlyChart"] iframe { overflow: hidden !important; }\n[data-testid="stPlotlyChart"] { overflow: visible !important; }\n[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { font-size: .95rem !important; font-weight: 800 !important; color: #EAF4FF !important; }\n[data-testid="stSidebar"] [data-baseweb="select"] { min-height: 42px; }
+h1 { font-weight: 800 !important; }
+[data-testid="stPlotlyChart"] iframe { overflow: hidden !important; }
+[data-testid="stPlotlyChart"] { overflow: visible !important; }
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { font-size: .95rem !important; font-weight: 800 !important; color: #EAF4FF !important; }
+[data-testid="stSidebar"] [data-baseweb="select"] { min-height: 42px; }
 p, label, .stMarkdown { color: var(--text); }
 [data-testid="stMetric"] {
     background: linear-gradient(145deg, rgba(16,35,56,.98), rgba(10,25,41,.98));
@@ -93,7 +112,9 @@ div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {
     background: #102338;
     border-color: #294660;
 }
-[data-testid="stExpander"] { border: 1px solid var(--line); border-radius: 12px; overflow: visible !important; }\n[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .55rem; }\n[data-testid="stSidebar"] [data-baseweb="popover"] { max-height: none !important; }
+[data-testid="stExpander"] { border: 1px solid var(--line); border-radius: 12px; overflow: visible !important; }
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .55rem; }
+[data-testid="stSidebar"] [data-baseweb="popover"] { max-height: none !important; }
 hr { border-color: var(--line); }
 .hero {
     padding: 1.4rem 1.5rem;
@@ -240,16 +261,18 @@ def style_chart(fig, height=350):
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
-        margin=dict(l=14, r=14, t=76, b=28),
-        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, pad=dict(b=10)),
+        autosize=True,
+        margin=dict(l=18, r=18, t=105, b=45),
+        title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=0.99, xanchor="left", yanchor="top", pad=dict(b=18)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
-            yanchor="bottom", y=1.02, xanchor="left", x=0
+            yanchor="bottom", y=1.01, xanchor="right", x=1,
+            title_text=""
         ),
         hoverlabel=dict(bgcolor="#102338", font_color="#EAF4FF"),
     )
-    fig.update_xaxes(showgrid=False, zeroline=False, automargin=True)
-    fig.update_yaxes(gridcolor="rgba(145,169,194,.13)", zeroline=False, automargin=True)
+    fig.update_xaxes(showgrid=False, zeroline=False, automargin=True, title_font=dict(size=12))
+    fig.update_yaxes(gridcolor="rgba(145,169,194,.13)", zeroline=False, automargin=True, title_font=dict(size=12))
     return fig
 
 CHURN_COLORS = {"No": "#36E4F5", "Yes": "#FF6B81"}
@@ -298,13 +321,12 @@ with right:
         .reset_index()
     )
     contract_rate["Churn Rate (%)"] = contract_rate["Churned"].div(contract_rate["Customers"]).mul(100).fillna(0)
-    fig = px.bar(
-        contract_rate, x="Contract", y="Churn Rate (%)",
+    fig = px.line(
+        contract_rate, x="Contract", y="Churn Rate (%)", markers=True,
         text=contract_rate["Churn Rate (%)"].map(lambda x: f"{x:.1f}%"),
-        color="Churn Rate (%)", color_continuous_scale=["#36E4F5", "#4D8DFF", "#FF6B81"],
         title="Churn rate by contract", hover_data=["Customers", "Churned"]
     )
-    fig.update_traces(textposition="outside", cliponaxis=False)
+    fig.update_traces(line=dict(color="#36E4F5", width=3), marker=dict(size=10, color="#FF6B81"), textposition="top center", cliponaxis=False)
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
 left, right = st.columns(2, gap="medium")
@@ -336,7 +358,7 @@ with left:
         title="Customers by payment method and churn status"
     )
     fig.update_xaxes(tickangle=-25)
-    st.plotly_chart(style_chart(fig, 430), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    st.plotly_chart(style_chart(fig, 460), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
     internet_summary = (
         filtered_df.groupby(["InternetService", "Churn"], observed=False).size()
