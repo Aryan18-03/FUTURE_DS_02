@@ -222,7 +222,7 @@ if missing_columns:
     st.error(f"The dataset is missing these columns: {missing_columns}")
     st.stop()
 
-# Sidebar controls use keyed widgets so the reset button truly restores defaults.
+# Compact sidebar filters: searchable multi-selects keep the controls short and easy to use.
 contract_options = sorted(df["Contract"].dropna().unique().tolist())
 internet_options = sorted(df["InternetService"].dropna().unique().tolist())
 payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
@@ -231,64 +231,48 @@ min_tenure = int(df["tenure"].min())
 max_tenure = int(df["tenure"].max())
 
 def reset_filters():
-    for option in contract_options:
-        st.session_state[f"contract_choice_{option}"] = True
-    for option in internet_options:
-        st.session_state[f"internet_choice_{option}"] = True
-    for option in payment_options:
-        st.session_state[f"payment_choice_{option}"] = True
+    st.session_state["contract_filter"] = contract_options
+    st.session_state["internet_filter"] = internet_options
+    st.session_state["payment_filter"] = payment_options
     st.session_state["senior_filter"] = "All customers"
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Open a filter to choose the customer groups for your analysis.")
-st.sidebar.markdown('<div class="sidebar-reset">', unsafe_allow_html=True)
-st.sidebar.button("↺  Reset all filters", on_click=reset_filters, use_container_width=True)
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
-st.sidebar.markdown("---")
+st.sidebar.caption("Choose options from the dropdowns. Leave all selected to include everyone.")
+st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-# Each filter is a collapsed dropdown; checkboxes inside allow multiple selections.
-with st.sidebar.expander("☷  Contract type", expanded=False):
-    contract_checks = {
-        option: st.checkbox(option, value=True, key=f"contract_choice_{option}")
-        for option in contract_options
-    }
-    selected_contracts = [option for option, checked in contract_checks.items() if checked]
-
-with st.sidebar.expander("☷  Internet service", expanded=False):
-    internet_checks = {
-        option: st.checkbox(option, value=True, key=f"internet_choice_{option}")
-        for option in internet_options
-    }
-    selected_internet = [option for option, checked in internet_checks.items() if checked]
-
-with st.sidebar.expander("☷  Payment method", expanded=False):
-    payment_checks = {
-        option: st.checkbox(option, value=True, key=f"payment_choice_{option}")
-        for option in payment_options
-    }
-    selected_payments = [option for option, checked in payment_checks.items() if checked]
-
-with st.sidebar.expander("☷  Customer profile", expanded=False):
-    selected_senior = st.radio(
-        "Choose customer profile",
-        senior_options,
-        index=0,
-        key="senior_filter",
-        label_visibility="collapsed",
-    )
-
-with st.sidebar.expander("☷  Customer tenure", expanded=False):
-    tenure_range = st.slider(
-        "Tenure range (months)",
-        min_tenure,
-        max_tenure,
-        (min_tenure, max_tenure),
-        key="tenure_filter",
-    )
-
-st.sidebar.markdown('<p class="small-note">Open any filter and tick the options you want to include.</p>', unsafe_allow_html=True)
+selected_contracts = st.sidebar.multiselect(
+    "Contract type",
+    options=contract_options,
+    default=contract_options,
+    key="contract_filter",
+)
+selected_internet = st.sidebar.multiselect(
+    "Internet service",
+    options=internet_options,
+    default=internet_options,
+    key="internet_filter",
+)
+selected_payments = st.sidebar.multiselect(
+    "Payment method",
+    options=payment_options,
+    default=payment_options,
+    key="payment_filter",
+)
+selected_senior = st.sidebar.selectbox(
+    "Customer profile",
+    options=senior_options,
+    index=0,
+    key="senior_filter",
+)
+tenure_range = st.sidebar.slider(
+    "Customer tenure (months)",
+    min_value=min_tenure,
+    max_value=max_tenure,
+    value=(min_tenure, max_tenure),
+    key="tenure_filter",
+)
 
 filtered_df = df[
     df["Contract"].isin(selected_contracts)
