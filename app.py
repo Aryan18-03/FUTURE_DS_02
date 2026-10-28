@@ -270,7 +270,7 @@ with right:
         .agg(Customers=("customerID", "count"), Churned=("Churn", lambda x: (x == "Yes").sum()))
         .reset_index()
     )
-    contract_rate["Churn Rate (%)"] = contract_rate["Churned"].div(contract_rate["Customers"].replace(0, pd.NA)).mul(100).fillna(0)
+    contract_rate["Churn Rate (%)"] = contract_rate["Churned"].div(contract_rate["Customers"]).mul(100).fillna(0)
     fig = px.bar(
         contract_rate, x="Contract", y="Churn Rate (%)",
         text=contract_rate["Churn Rate (%)"].map(lambda x: f"{x:.1f}%"),
@@ -332,7 +332,7 @@ def churn_rate_table(frame, group_col):
         total=("Churn", "size"),
         churned=("Churn", lambda values: (values == "Yes").sum())
     )
-    summary["rate"] = summary["churned"].div(summary["total"].replace(0, pd.NA)).mul(100).fillna(0)
+    summary["rate"] = summary["churned"].div(summary["total"]).mul(100).fillna(0)
     return summary
 
 contract_rates = churn_rate_table(filtered_df, "Contract")
