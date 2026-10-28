@@ -149,42 +149,52 @@ except Exception as error:
 
 required_columns = [
     "customerID", "Churn", "Contract", "InternetService", "PaymentMethod",
-    "tenure", "MonthlyCharges", "TotalCharges"
+    "SeniorCitizen", "tenure", "MonthlyCharges", "TotalCharges"
 ]
 missing_columns = [col for col in required_columns if col not in df.columns]
 if missing_columns:
     st.error(f"The dataset is missing these columns: {missing_columns}")
     st.stop()
 
-# Sidebar controls are grouped and include an all-values default.
+# Sidebar controls use keyed widgets so the reset button truly restores defaults.
+contract_options = sorted(df["Contract"].dropna().unique().tolist())
+internet_options = sorted(df["InternetService"].dropna().unique().tolist())
+payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
+senior_options = ["All customers", "Senior citizens", "Non-senior citizens"]
+min_tenure = int(df["tenure"].min())
+max_tenure = int(df["tenure"].max())
+
+def reset_filters():
+    st.session_state["contract_filter"] = contract_options
+    st.session_state["internet_filter"] = internet_options
+    st.session_state["payment_filter"] = payment_options
+    st.session_state["senior_filter"] = "All customers"
+    st.session_state["tenure_filter"] = (min_tenure, max_tenure)
+
 st.sidebar.markdown("## 🎛️ Segment controls")
-st.sidebar.caption("Filter the customer base to inspect a specific segment.")
+st.sidebar.caption("Choose a segment to compare its retention patterns. Churn status is intentionally not a filter, so churn-rate calculations remain meaningful.")
 with st.sidebar.expander("Contract & service", expanded=True):
-    contract_options = sorted(df["Contract"].dropna().unique().tolist())
-    internet_options = sorted(df["InternetService"].dropna().unique().tolist())
-    selected_contracts = st.multiselect("Contract type", contract_options, default=contract_options)
-    selected_internet = st.multiselect("Internet service", internet_options, default=internet_options)
-with st.sidebar.expander("Billing & churn", expanded=True):
-    payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
-    churn_options = sorted(df["Churn"].dropna().unique().tolist())
-    selected_payments = st.multiselect("Payment method", payment_options, default=payment_options)
-    selected_churn = st.multiselect("Churn status", churn_options, default=churn_options)
+    selected_contracts = st.multiselect("Contract type", contract_options, default=contract_options, key="contract_filter")
+    selected_internet = st.multiselect("Internet service", internet_options, default=internet_options, key="internet_filter")
+with st.sidebar.expander("Billing & customer profile", expanded=True):
+    selected_payments = st.multiselect("Payment method", payment_options, default=payment_options, key="payment_filter")
+    selected_senior = st.selectbox("Customer profile", senior_options, index=0, key="senior_filter")
 with st.sidebar.expander("Customer tenure", expanded=True):
-    min_tenure = int(df["tenure"].min())
-    max_tenure = int(df["tenure"].max())
-    tenure_range = st.slider("Tenure range (months)", min_tenure, max_tenure, (min_tenure, max_tenure))
-if st.sidebar.button("↺ Reset all filters", use_container_width=True):
-    st.rerun()
+    tenure_range = st.slider("Tenure range (months)", min_tenure, max_tenure, (min_tenure, max_tenure), key="tenure_filter")
+st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 st.sidebar.markdown("---")
-st.sidebar.markdown('<p class="small-note">Tip: compare contract and service segments to find where retention support may have the greatest impact.</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p class="small-note">Tip: compare segments while keeping both churned and retained customers in view.</p>', unsafe_allow_html=True)
 
 filtered_df = df[
     df["Contract"].isin(selected_contracts)
     & df["InternetService"].isin(selected_internet)
     & df["PaymentMethod"].isin(selected_payments)
-    & df["Churn"].isin(selected_churn)
     & df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
+if selected_senior == "Senior citizens":
+    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 1].copy()
+elif selected_senior == "Non-senior citizens":
+    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 0].copy()
 
 total_customers = len(filtered_df)
 churned_customers = int((filtered_df["Churn"] == "Yes").sum())
@@ -200,7 +210,7 @@ k2.metric("Churned customers", f"{churned_customers:,}")
 k3.metric("Churn rate", f"{churn_rate:.2f}%")
 k4.metric("Retention rate", f"{retention_rate:.2f}%")
 k5.metric("Avg. monthly charge", f"${avg_monthly_charges:,.2f}")
-st.caption(f"Filtered view: {total_customers:,} customers. KPI values respond to your selected filters.")
+st.caption(f"Filtered view: {total_customers:,} customers. Churn and retention rates include both churn outcomes in the selected segment.")
 
 if filtered_df.empty:
     st.warning("No customers match the selected filters. Widen one or more filters to continue.")
