@@ -241,38 +241,54 @@ def reset_filters():
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
-st.sidebar.markdown("## 🎛️ Segment controls")
-st.sidebar.caption("Explore customer groups while keeping churn-rate comparisons meaningful.")
+st.sidebar.markdown("## 🎛️ Filters")
+st.sidebar.caption("Open a filter to choose the customer groups for your analysis.")
 st.sidebar.markdown('<div class="sidebar-reset">', unsafe_allow_html=True)
 st.sidebar.button("↺  Reset all filters", on_click=reset_filters, use_container_width=True)
 st.sidebar.markdown('</div>', unsafe_allow_html=True)
 st.sidebar.markdown("---")
-with st.sidebar.expander("▦  Contract & service", expanded=True):
-    st.markdown("**Contract type**")
+
+# Each filter is a collapsed dropdown; checkboxes inside allow multiple selections.
+with st.sidebar.expander("☷  Contract type", expanded=False):
     contract_checks = {
         option: st.checkbox(option, value=True, key=f"contract_choice_{option}")
         for option in contract_options
     }
     selected_contracts = [option for option, checked in contract_checks.items() if checked]
 
-    st.markdown("**Internet service**")
+with st.sidebar.expander("☷  Internet service", expanded=False):
     internet_checks = {
         option: st.checkbox(option, value=True, key=f"internet_choice_{option}")
         for option in internet_options
     }
     selected_internet = [option for option, checked in internet_checks.items() if checked]
 
-with st.sidebar.expander("◈  Billing & customer profile", expanded=True):
-    st.markdown("**Payment method**")
+with st.sidebar.expander("☷  Payment method", expanded=False):
     payment_checks = {
         option: st.checkbox(option, value=True, key=f"payment_choice_{option}")
         for option in payment_options
     }
     selected_payments = [option for option, checked in payment_checks.items() if checked]
-    selected_senior = st.selectbox("Customer profile", senior_options, index=0, key="senior_filter")
-with st.sidebar.expander("◷  Customer tenure", expanded=True):
-    tenure_range = st.slider("Tenure range (months)", min_tenure, max_tenure, (min_tenure, max_tenure), key="tenure_filter")
-st.sidebar.markdown('<p class="small-note">Tip: compare contract, billing, and tenure segments to identify where retention support may help.</p>', unsafe_allow_html=True)
+
+with st.sidebar.expander("☷  Customer profile", expanded=False):
+    selected_senior = st.radio(
+        "Choose customer profile",
+        senior_options,
+        index=0,
+        key="senior_filter",
+        label_visibility="collapsed",
+    )
+
+with st.sidebar.expander("☷  Customer tenure", expanded=False):
+    tenure_range = st.slider(
+        "Tenure range (months)",
+        min_tenure,
+        max_tenure,
+        (min_tenure, max_tenure),
+        key="tenure_filter",
+    )
+
+st.sidebar.markdown('<p class="small-note">Open any filter and tick the options you want to include.</p>', unsafe_allow_html=True)
 
 filtered_df = df[
     df["Contract"].isin(selected_contracts)
@@ -313,11 +329,11 @@ def style_chart(fig, height=390):
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
         autosize=True,
-        margin=dict(l=16, r=16, t=78, b=38),
+        margin=dict(l=20, r=20, t=58, b=42),
         title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=0.98, xanchor="left", yanchor="top", pad=dict(b=0)),
         legend=dict(
             bgcolor="rgba(0,0,0,0)", orientation="h",
-            yanchor="top", y=0.90, xanchor="right", x=1,
+            yanchor="top", y=0.88, xanchor="right", x=1,
             title_text="", font=dict(size=10)
         ),
         hoverlabel=dict(bgcolor="#102338", font_color="#EAF4FF"),
@@ -345,11 +361,11 @@ with left:
     st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 with right:
     fig = px.pie(
-        churn_summary, names="Churn", values="Customers", hole=.66,
+        churn_summary, names="Churn", values="Customers", hole=.58,
         color="Churn", color_discrete_map=CHURN_COLORS, title="Share of customers"
     )
-    fig.update_traces(textinfo="percent+label", marker=dict(line=dict(color="#0D1B2A", width=3)))
-    st.plotly_chart(style_chart(fig), use_container_width=True, config={"displayModeBar": False, "responsive": True})
+    fig.update_traces(textinfo="label+percent", textposition="outside", textfont=dict(size=14, color="#FFFFFF"), automargin=True, marker=dict(line=dict(color="#0D1B2A", width=3)), pull=[0, 0.04])
+    st.plotly_chart(style_chart(fig, 420), use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
 st.markdown("---")
 st.subheader("02 / Risk signals")
