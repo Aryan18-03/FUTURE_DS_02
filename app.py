@@ -38,9 +38,19 @@ st.markdown("""
 footer { visibility: hidden; }
 .block-container { padding-top: .8rem !important; }
 [data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0B1B2B 0%, #091522 100%);
-    border-right: 1px solid var(--line);
+    background: radial-gradient(ellipse at 10% 0%, rgba(54,228,245,.12), transparent 38%), linear-gradient(180deg, #0B1B2B 0%, #091522 100%);
+    border-right: 1px solid rgba(54,228,245,.22);
 }
+[data-testid="stSidebar"] [data-testid="stExpander"] {
+    background: linear-gradient(145deg, rgba(16,35,56,.92), rgba(8,21,35,.92));
+    border: 1px solid rgba(77,141,255,.28) !important;
+    border-radius: 14px !important;
+    margin-bottom: .55rem;
+}
+[data-testid="stSidebar"] [data-testid="stExpander"] summary { font-weight: 750; }
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color: #A8C5E0 !important; font-size: .82rem; font-weight: 650; }
+.sidebar-kicker { color: var(--cyan); font-size: .72rem; font-weight: 850; letter-spacing: .16em; }
+.sidebar-reset button { min-height: 44px; background: linear-gradient(100deg, rgba(54,228,245,.22), rgba(167,139,250,.20)); border: 1px solid rgba(54,228,245,.65); box-shadow: 0 5px 18px rgba(54,228,245,.09); }
 [data-testid="stSidebar"] * { color: var(--text); }
 .block-container { padding-top: 1.5rem; padding-bottom: 2.5rem; max-width: 1500px; }
 h1, h2, h3 { color: var(--text) !important; letter-spacing: -.025em; }
@@ -175,19 +185,22 @@ def reset_filters():
     st.session_state["senior_filter"] = "All customers"
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
 
+st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Segment controls")
-st.sidebar.caption("Choose a segment to compare its retention patterns. Churn status is intentionally not a filter, so churn-rate calculations remain meaningful.")
-with st.sidebar.expander("Contract & service", expanded=True):
+st.sidebar.caption("Explore customer groups while keeping churn-rate comparisons meaningful.")
+st.sidebar.markdown('<div class="sidebar-reset">', unsafe_allow_html=True)
+st.sidebar.button("↺  Reset all filters", on_click=reset_filters, use_container_width=True)
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
+st.sidebar.markdown("---")
+with st.sidebar.expander("▦  Contract & service", expanded=True):
     selected_contracts = st.multiselect("Contract type", contract_options, default=contract_options, key="contract_filter")
     selected_internet = st.multiselect("Internet service", internet_options, default=internet_options, key="internet_filter")
-with st.sidebar.expander("Billing & customer profile", expanded=True):
+with st.sidebar.expander("◈  Billing & customer profile", expanded=True):
     selected_payments = st.multiselect("Payment method", payment_options, default=payment_options, key="payment_filter")
     selected_senior = st.selectbox("Customer profile", senior_options, index=0, key="senior_filter")
-with st.sidebar.expander("Customer tenure", expanded=True):
+with st.sidebar.expander("◷  Customer tenure", expanded=True):
     tenure_range = st.slider("Tenure range (months)", min_tenure, max_tenure, (min_tenure, max_tenure), key="tenure_filter")
-st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
-st.sidebar.markdown("---")
-st.sidebar.markdown('<p class="small-note">Tip: compare segments while keeping both churned and retained customers in view.</p>', unsafe_allow_html=True)
+st.sidebar.markdown('<p class="small-note">Tip: compare contract, billing, and tenure segments to identify where retention support may help.</p>', unsafe_allow_html=True)
 
 filtered_df = df[
     df["Contract"].isin(selected_contracts)
