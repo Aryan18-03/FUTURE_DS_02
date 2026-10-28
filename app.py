@@ -54,38 +54,29 @@ footer { visibility: hidden; }
     border: 1px solid #36536F !important;
     border-radius: 9px !important;
 }
-/* Power BI-style slicer buttons: compact, rounded, and cool-toned. */
-[data-testid="stPills"] button {
-    border-radius: 8px !important;
-    border: 1px solid #36536F !important;
+/* Original compact multi-select dropdown styling. */
+[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    min-height: 42px !important;
     background: #102338 !important;
+    border: 1px solid #36536F !important;
+    border-radius: 9px !important;
+}
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] {
+    background: #142B40 !important;
+    background-color: #142B40 !important;
+    border: 1px solid #36536F !important;
+    border-radius: 7px !important;
+    box-shadow: none !important;
+    color: #EAF4FF !important;
+}
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] span {
     color: #DCEBFA !important;
-    font-weight: 600 !important;
-    transition: all .15s ease !important;
+    font-size: .82rem !important;
 }
-[data-testid="stPills"] button:hover {
-    border-color: #36E4F5 !important;
-    color: #36E4F5 !important;
-}
-[data-testid="stPills"] button[aria-pressed="true"] {
-    background: rgba(54,228,245,.16) !important;
-    border: 1px solid #36E4F5 !important;
-    color: #36E4F5 !important;
-    box-shadow: inset 0 0 0 1px rgba(54,228,245,.10) !important;
-}
-.slicer-panel {
-    padding: 1rem 1.1rem .5rem 1.1rem;
-    margin: .6rem 0 1.1rem 0;
-    border: 1px solid rgba(54,228,245,.24);
-    border-radius: 15px;
-    background: linear-gradient(145deg, rgba(13,27,42,.96), rgba(10,25,41,.92));
-}
-.slicer-heading {
-    color: #36E4F5;
-    font-size: .74rem;
-    font-weight: 850;
-    letter-spacing: .15em;
-    margin-bottom: .5rem;
+[data-testid="stSidebar"] [data-testid="stMultiSelect"] [data-baseweb="tag"] svg {
+    color: #91A9C2 !important;
+    fill: none !important;
+    stroke: #91A9C2 !important;
 }
 [data-testid="stSidebar"] [data-testid="stSlider"] { padding-top: .3rem; }
 [data-testid="stSidebar"] [data-testid="stCheckbox"] {
@@ -266,40 +257,44 @@ def reset_filters():
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Use the slicer buttons above the dashboard to select one or more values.")
+st.sidebar.caption("Open a dropdown to select multiple options. Leave a filter empty to include all values.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-# Power BI-style slicers: visible selectable buttons instead of dropdown chips.
-st.markdown('<div class="slicer-panel"><div class="slicer-heading">INTERACTIVE SLICERS</div>', unsafe_allow_html=True)
-slicer_row1 = st.columns([1, 1, 1, 1], gap="medium")
-with slicer_row1[0]:
-    selected_contract = st.pills(
-        "Contract type", options=contract_options, selection_mode="multi",
-        default=st.session_state.get("contract_filter", []), key="contract_filter",
-    )
-with slicer_row1[1]:
-    selected_internet = st.pills(
-        "Internet service", options=internet_options, selection_mode="multi",
-        default=st.session_state.get("internet_filter", []), key="internet_filter",
-    )
-with slicer_row1[2]:
-    selected_payment = st.pills(
-        "Payment method", options=payment_options, selection_mode="multi",
-        default=st.session_state.get("payment_filter", []), key="payment_filter",
-    )
-with slicer_row1[3]:
-    selected_senior = st.pills(
-        "Customer profile", options=senior_options, selection_mode="multi",
-        default=st.session_state.get("senior_filter", []), key="senior_filter",
-    )
-tenure_range = st.slider(
+selected_contract = st.sidebar.multiselect(
+    "Contract type",
+    options=contract_options,
+    default=[],
+    placeholder="Choose contract types",
+    key="contract_filter",
+)
+selected_internet = st.sidebar.multiselect(
+    "Internet service",
+    options=internet_options,
+    default=[],
+    placeholder="Choose internet services",
+    key="internet_filter",
+)
+selected_payment = st.sidebar.multiselect(
+    "Payment method",
+    options=payment_options,
+    default=[],
+    placeholder="Choose payment methods",
+    key="payment_filter",
+)
+selected_senior = st.sidebar.multiselect(
+    "Customer profile",
+    options=senior_options,
+    default=[],
+    placeholder="Choose customer profiles",
+    key="senior_filter",
+)
+tenure_range = st.sidebar.slider(
     "Customer tenure (months)",
     min_value=min_tenure,
     max_value=max_tenure,
-    value=st.session_state.get("tenure_filter", (min_tenure, max_tenure)),
+    value=(min_tenure, max_tenure),
     key="tenure_filter",
 )
-st.markdown('</div>', unsafe_allow_html=True)
 
 filtered_df = df.copy()
 if selected_contract:
