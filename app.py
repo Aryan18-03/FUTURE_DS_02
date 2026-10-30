@@ -117,18 +117,18 @@ h1 { font-weight: 800 !important; }
 [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { font-size: .95rem !important; font-weight: 800 !important; color: #EAF4FF !important; }
 [data-testid="stSidebar"] [data-baseweb="select"] { min-height: 42px; }
 p, label, .stMarkdown { color: var(--text); }
-[data-testid="stMetric"] {
-    background: linear-gradient(145deg, rgba(16,35,56,.98), rgba(10,25,41,.98));
-    border: 1px solid var(--line);
-    border-top: 2px solid var(--cyan);
-    padding: 1rem 1.05rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 28px rgba(0,0,0,.14);
-    min-height: 112px;
+.kpi-card {
+    min-height: 126px; height: 100%; padding: .9rem .95rem;
+    border: 1px solid rgba(77,141,255,.30); border-top: 3px solid var(--kpi-accent);
+    border-radius: 14px; background: linear-gradient(145deg, rgba(13,34,57,.98), rgba(5,19,36,.98));
+    box-shadow: 0 8px 24px rgba(0,0,0,.20), inset 0 1px 0 rgba(255,255,255,.035);
 }
-[data-testid="stMetricLabel"] { color: #C7D8EA !important; font-size: 1.12rem !important; font-weight: 800 !important; }
-[data-testid="stMetricValue"] { color: var(--cyan) !important; font-size: 1.85rem !important; font-weight: 850 !important; }
-[data-testid="stMetricDelta"] { font-size: .8rem; }
+.kpi-top { display:flex; align-items:center; gap:.55rem; min-height:30px; }
+.kpi-icon { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; background:color-mix(in srgb, var(--kpi-accent) 17%, transparent); font-size:1.05rem; }
+.kpi-label { color:#C8D9EC; font-size:.82rem; font-weight:750; line-height:1.2; }
+.kpi-value { color:#F3F8FF; font-size:1.65rem; font-weight:850; letter-spacing:-.04em; margin-top:.45rem; white-space:nowrap; }
+.kpi-note { color:#8FAAC5; font-size:.70rem; margin-top:.12rem; }
+[data-testid="stMetric"] { background:linear-gradient(145deg,rgba(13,34,57,.98),rgba(5,19,36,.98)); border:1px solid var(--line); border-top:2px solid var(--cyan); padding:1rem; border-radius:14px; }
 div[data-testid="stPlotlyChart"] {
     background: rgba(13,27,42,.74);
     border: 1px solid var(--line);
@@ -368,13 +368,20 @@ churn_rate = churned_customers / total_customers * 100 if total_customers else 0
 retention_rate = retained_customers / total_customers * 100 if total_customers else 0
 avg_monthly_charges = filtered_df["MonthlyCharges"].mean() if total_customers else 0
 
-st.subheader("📈 Customer Retention Performance KPIs")
-k1, k2, k3, k4, k5 = st.columns(5)
-k1.metric("Customers in view", f"{total_customers:,}")
-k2.metric("Churned customers", f"{churned_customers:,}")
-k3.metric("Churn rate", f"{churn_rate:.2f}%")
-k4.metric("Retention rate", f"{retention_rate:.2f}%")
-k5.metric("Avg. monthly charge", f"${avg_monthly_charges:,.2f}")
+st.subheader("📈 Customer Retention Performance")
+def render_kpi(icon, label, value, accent, note):
+    st.markdown(
+        f'<div class="kpi-card" style="--kpi-accent:{accent}">'
+        f'<div class="kpi-top"><span class="kpi-icon">{icon}</span><span class="kpi-label">{label}</span></div>'
+        f'<div class="kpi-value">{value}</div><div class="kpi-note">{note}</div></div>',
+        unsafe_allow_html=True,
+    )
+k1, k2, k3, k4, k5 = st.columns(5, gap="small")
+with k1: render_kpi("👥", "Customers in view", f"{total_customers:,}", "#36E4F5", "Selected customer segment")
+with k2: render_kpi("↗", "Churned customers", f"{churned_customers:,}", "#FF6B81", f"{churn_rate:.1f}% of customers")
+with k3: render_kpi("🛡️", "Retention rate", f"{retention_rate:.1f}%", "#4DE2B1", f"{retained_customers:,} retained")
+with k4: render_kpi("📉", "Churn rate", f"{churn_rate:.1f}%", "#A78BFA", f"{churned_customers:,} churned")
+with k5: render_kpi("💳", "Avg. monthly charge", f"${avg_monthly_charges:,.2f}", "#4D8DFF", "Per customer")
 st.caption(f"Filtered view: {total_customers:,} customers. Churn and retention rates include both churn outcomes in the selected segment.")
 
 if filtered_df.empty:
@@ -387,6 +394,7 @@ def style_chart(fig, height=390):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#DCEBFA", family="Arial"),
+        colorway=["#36E4F5", "#A78BFA", "#FF6B81", "#4D8DFF", "#4DE2B1", "#F6C85F"],
         height=height,
         autosize=True,
         # Keep legends below the plotting area so they never overlap chart content.
