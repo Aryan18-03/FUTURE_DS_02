@@ -256,7 +256,7 @@ if missing_columns:
     st.error(f"The dataset is missing these columns: {missing_columns}")
     st.stop()
 
-# Multi-select dropdown filters: choose one or more values, or leave blank for all.
+# Sidebar filters: choose one or more values, or leave blank for all.
 contract_options = sorted(df["Contract"].dropna().unique().tolist())
 internet_options = sorted(df["InternetService"].dropna().unique().tolist())
 payment_options = sorted(df["PaymentMethod"].dropna().unique().tolist())
@@ -275,7 +275,8 @@ def reset_filters():
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
-st.sidebar.caption("Open a dropdown to select multiple options. Leave a filter empty to include all values.")
+st.sidebar.markdown("**Customer & service filters**")
+st.sidebar.caption("Choose customer and service criteria below. Leave a filter empty to include all values.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
 selected_contract = st.sidebar.multiselect(
@@ -317,40 +318,33 @@ if selected_payment:
 filtered_df = filtered_df[
     filtered_df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
-# Main-page slicers are kept separate from the sidebar filters.
-st.markdown("""
-<div class="slicer-heading">
-  <div class="eyebrow">SEGMENT EXPLORER</div>
-  <h3>🎚️ Dashboard slicers</h3>
-  <p>Refine the full dashboard by customer gender, churn status, or age profile.</p>
-</div>
-""", unsafe_allow_html=True)
+# Keep both filter controls and analytical slicers together in the left sidebar.
+st.sidebar.markdown("---")
+st.sidebar.markdown('<div class="sidebar-kicker">SEGMENT EXPLORER</div>', unsafe_allow_html=True)
+st.sidebar.markdown("### 🎚️ Slicers")
+st.sidebar.caption("Use these slicers to segment the dashboard. Leave blank to include everyone.")
 
-slicer_gender, slicer_churn, slicer_senior = st.columns(3, gap="medium")
-with slicer_gender:
-    selected_gender = st.multiselect(
-        "👤 Gender",
-        options=sorted(df["gender"].dropna().unique().tolist()),
-        default=[],
-        placeholder="All genders",
-        key="gender_slicer",
-    )
-with slicer_churn:
-    selected_churn = st.multiselect(
-        "📌 Churn status",
-        options=["Yes", "No"],
-        default=[],
-        placeholder="All churn statuses",
-        key="churn_slicer",
-    )
-with slicer_senior:
-    selected_senior_slicer = st.multiselect(
-        "🧑‍🤝‍🧑 Senior citizen",
-        options=["Senior citizens", "Non-senior citizens"],
-        default=[],
-        placeholder="All customer profiles",
-        key="senior_slicer",
-    )
+selected_gender = st.sidebar.multiselect(
+    "👤 Gender",
+    options=sorted(df["gender"].dropna().unique().tolist()),
+    default=[],
+    placeholder="All genders",
+    key="gender_slicer",
+)
+selected_churn = st.sidebar.multiselect(
+    "📌 Churn status",
+    options=["Yes", "No"],
+    default=[],
+    placeholder="All churn statuses",
+    key="churn_slicer",
+)
+selected_senior_slicer = st.sidebar.multiselect(
+    "🧑‍🤝‍🧑 Senior citizen",
+    options=["Senior citizens", "Non-senior citizens"],
+    default=[],
+    placeholder="All customer profiles",
+    key="senior_slicer",
+)
 
 if selected_gender:
     filtered_df = filtered_df[filtered_df["gender"].isin(selected_gender)].copy()
