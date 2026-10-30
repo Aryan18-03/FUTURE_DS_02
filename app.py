@@ -343,12 +343,16 @@ def style_chart(fig, height=390):
         font=dict(color="#DCEBFA", family="Arial"),
         height=height,
         autosize=True,
-        margin=dict(l=20, r=20, t=58, b=42),
+        # Keep legends below the plotting area so they never overlap chart content.
+        margin=dict(l=24, r=24, t=68, b=92),
         title=dict(font=dict(size=15, color="#FFFFFF", family="Arial"), x=0.02, y=0.98, xanchor="left", yanchor="top", pad=dict(b=0)),
         legend=dict(
-            bgcolor="rgba(0,0,0,0)", orientation="h",
-            yanchor="top", y=0.88, xanchor="right", x=1,
-            title_text="", font=dict(size=10)
+            bgcolor="rgba(0,0,0,0)",
+            orientation="h",
+            yanchor="top", y=-0.22,
+            xanchor="center", x=0.5,
+            title_text="", font=dict(size=10),
+            entrywidth=110, entrywidthmode="pixels"
         ),
         hoverlabel=dict(bgcolor="#102338", font_color="#EAF4FF"),
     )
@@ -392,12 +396,12 @@ with right:
         legend=dict(
             bgcolor="rgba(0,0,0,0)",
             orientation="h",
-            yanchor="bottom", y=1.16,
+            yanchor="top", y=-0.22,
             xanchor="center", x=0.5,
             title_text="",
             font=dict(size=11, color="#FFFFFF"),
         ),
-        margin=dict(l=42, r=42, t=112, b=42),
+        margin=dict(l=42, r=42, t=68, b=92),
     )
     st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False, "responsive": True})
 
