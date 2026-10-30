@@ -513,7 +513,142 @@ with action_col:
     """, unsafe_allow_html=True)
 
 st.markdown("---")
-st.subheader("04 / Customer records")
+st.subheader("04 / Customer Retention Action Center")
+st.caption(
+    "A transparent, rule-based screening tool for prioritising retention follow-ups. "
+    "It does not predict churn probability."
+)
+
+# Start with customers who are still active. Churned customers cannot be retained.
+active_customers = filtered_df[filtered_df["Churn"] == "No"].copy()
+
+# Each condition adds points based on patterns worth investigating.
+# These are simple business rules, not a trained machine-learning model.
+active_customers["Risk Score"] = 0
+active_customers["Risk Reasons"] = ""
+
+risk_rules = [
+    (
+        active_customers["Contract"] == "Month-to-month",
+        3,
+        "Month-to-month contract",
+    ),
+    (
+        active_customers["tenure"] <= 12,
+        2,
+        "Customer tenure is 12 months or less",
+    ),
+    (
+        active_customers["PaymentMethod"] == "Electronic check",
+        1,
+        "Uses electronic check",
+    ),
+    (
+        active_customers["InternetService"] == "Fiber optic",
+        1,
+        "Uses fiber optic internet",
+    ),
+]
+
+for condition, points, reason in risk_rules:
+    active_customers.loc[condition, "Risk Score"] += points
+    active_customers.loc[condition, "Risk Reasons"] = (
+        active_customers.loc[condition, "Risk Reasons"]
+        .apply(lambda current: f"{current}; " if current else "")
+        + reason
+    )
+
+def assign_priority(score):
+    if score >= 5:
+        return "High"
+    if score >= 3:
+        return "Medium"
+    return "Low"
+
+active_customers["Priority"] = active_customers["Risk Score"].apply(assign_priority)
+
+high_priority = int((active_customers["Priority"] == "High").sum())
+medium_priority = int((active_customers["Priority"] == "Medium").sum())
+low_priority = int((active_customers["Priority"] == "Low").sum())
+
+priority_1, priority_2, priority_3 = st.columns(3)
+priority_1.metric("High priority", f"{high_priority:,}")
+priority_2.metric("Medium priority", f"{medium_priority:,}")
+priority_3.metric("Low priority", f"{low_priority:,}")
+
+with st.expander("How is the score calculated?"):
+    st.markdown(
+        """
+        | Customer characteristic | Points |
+        |---|---:|
+        | Month-to-month contract | +3 |
+        | Tenure of 12 months or less | +2 |
+        | Electronic-check payment | +1 |
+        | Fiber optic internet | +1 |
+
+        **Priority bands:** High = 5–7 points · Medium = 3–4 points · Low = 0–2 points.
+
+        These rules are based on patterns explored in this dataset. They are not validated
+        probabilities, and a high score does not mean a customer will definitely leave.
+        Use the list to guide supportive follow-ups, not to make automatic decisions.
+        """
+    )
+
+priority_filter = st.multiselect(
+    "Show priority groups",
+    options=["High", "Medium", "Low"],
+    default=["High", "Medium"],
+    key="retention_priority_filter",
+    help="Choose which customer priority groups to display.",
+)
+
+retention_view = active_customers[
+    active_customers["Priority"].isin(priority_filter)
+].copy()
+
+customer_search = st.text_input(
+    "Search customer ID",
+    placeholder="Enter a customer ID (optional)",
+    key="retention_customer_search",
+)
+if customer_search.strip():
+    retention_view = retention_view[
+        retention_view["customerID"].astype(str).str.contains(
+            customer_search.strip(), case=False, na=False
+        )
+    ]
+
+retention_columns = [
+    "customerID",
+    "Priority",
+    "Risk Score",
+    "Risk Reasons",
+    "tenure",
+    "Contract",
+    "InternetService",
+    "PaymentMethod",
+    "MonthlyCharges",
+]
+st.dataframe(
+    retention_view[retention_columns].sort_values(
+        by=["Risk Score", "tenure"],
+        ascending=[False, True],
+    ),
+    use_container_width=True,
+    hide_index=True,
+)
+
+retention_csv = retention_view[retention_columns].to_csv(index=False).encode("utf-8")
+st.download_button(
+    label="⬇️ Download retention follow-up list",
+    data=retention_csv,
+    file_name="customer_retention_priority_list.csv",
+    mime="text/csv",
+    use_container_width=True,
+)
+
+st.markdown("---")
+st.subheader("05 / Customer records")
 with st.expander("Preview filtered customer data"):
     st.dataframe(filtered_df, use_container_width=True, hide_index=True)
 csv_data = filtered_df.to_csv(index=False).encode("utf-8")
