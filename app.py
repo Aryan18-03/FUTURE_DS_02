@@ -165,6 +165,22 @@ div[data-baseweb="select"] > div, div[data-baseweb="input"] > div {
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { gap: .55rem; }
 [data-testid="stSidebar"] [data-baseweb="popover"] { max-height: none !important; }
 hr { border-color: var(--line); }
+.slicer-heading {
+    padding: .85rem 1.1rem .35rem;
+    margin: .25rem 0 .65rem;
+    border-left: 3px solid var(--violet);
+    background: linear-gradient(100deg, rgba(54,228,245,.07), rgba(167,139,250,.08));
+    border-radius: 0 12px 12px 0;
+}
+.slicer-heading h3 { margin: .18rem 0 .12rem; }
+.slicer-heading p { color: var(--muted); margin: 0; font-size: .88rem; }
+div[data-testid="stHorizontalBlock"] [data-testid="stMultiSelect"] [data-baseweb="select"] > div {
+    background: linear-gradient(145deg, #102338, #0D1B2A) !important;
+    border: 1px solid rgba(54,228,245,.38) !important;
+    border-radius: 11px !important;
+    min-height: 46px !important;
+    box-shadow: 0 5px 16px rgba(0,0,0,.12);
+}
 .hero {
     padding: 1.4rem 1.5rem;
     border: 1px solid rgba(54,228,245,.27);
@@ -252,8 +268,10 @@ def reset_filters():
     st.session_state["contract_filter"] = []
     st.session_state["internet_filter"] = []
     st.session_state["payment_filter"] = []
-    st.session_state["senior_filter"] = []
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
+    st.session_state["gender_slicer"] = []
+    st.session_state["churn_slicer"] = []
+    st.session_state["senior_slicer"] = []
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
@@ -281,13 +299,6 @@ selected_payment = st.sidebar.multiselect(
     placeholder="Choose payment methods",
     key="payment_filter",
 )
-selected_senior = st.sidebar.multiselect(
-    "Customer profile",
-    options=senior_options,
-    default=[],
-    placeholder="Choose customer profiles",
-    key="senior_filter",
-)
 tenure_range = st.sidebar.slider(
     "Customer tenure (months)",
     min_value=min_tenure,
@@ -306,12 +317,53 @@ if selected_payment:
 filtered_df = filtered_df[
     filtered_df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
-if selected_senior:
+# Main-page slicers are kept separate from the sidebar filters.
+st.markdown("""
+<div class="slicer-heading">
+  <div class="eyebrow">SEGMENT EXPLORER</div>
+  <h3>🎚️ Dashboard slicers</h3>
+  <p>Refine the full dashboard by customer gender, churn status, or age profile.</p>
+</div>
+""", unsafe_allow_html=True)
+
+slicer_gender, slicer_churn, slicer_senior = st.columns(3, gap="medium")
+with slicer_gender:
+    selected_gender = st.multiselect(
+        "👤 Gender",
+        options=sorted(df["gender"].dropna().unique().tolist()),
+        default=[],
+        placeholder="All genders",
+        key="gender_slicer",
+    )
+with slicer_churn:
+    selected_churn = st.multiselect(
+        "📌 Churn status",
+        options=["Yes", "No"],
+        default=[],
+        placeholder="All churn statuses",
+        key="churn_slicer",
+    )
+with slicer_senior:
+    selected_senior_slicer = st.multiselect(
+        "🧑‍🤝‍🧑 Senior citizen",
+        options=["Senior citizens", "Non-senior citizens"],
+        default=[],
+        placeholder="All customer profiles",
+        key="senior_slicer",
+    )
+
+if selected_gender:
+    filtered_df = filtered_df[filtered_df["gender"].isin(selected_gender)].copy()
+if selected_churn:
+    filtered_df = filtered_df[filtered_df["Churn"].isin(selected_churn)].copy()
+if selected_senior_slicer:
     senior_mask = (
-        (filtered_df["SeniorCitizen"] == 1) if "Senior citizens" in selected_senior else False
+        (filtered_df["SeniorCitizen"] == 1)
+        if "Senior citizens" in selected_senior_slicer else False
     )
     non_senior_mask = (
-        (filtered_df["SeniorCitizen"] == 0) if "Non-senior citizens" in selected_senior else False
+        (filtered_df["SeniorCitizen"] == 0)
+        if "Non-senior citizens" in selected_senior_slicer else False
     )
     filtered_df = filtered_df[senior_mask | non_senior_mask].copy()
 
