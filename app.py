@@ -269,9 +269,9 @@ def reset_filters():
     st.session_state["internet_filter"] = []
     st.session_state["payment_filter"] = []
     st.session_state["tenure_filter"] = (min_tenure, max_tenure)
-    st.session_state["gender_slicer"] = []
-    st.session_state["churn_slicer"] = []
-    st.session_state["senior_slicer"] = []
+    st.session_state["gender_slicer"] = "All"
+    st.session_state["churn_slicer"] = "All"
+    st.session_state["senior_slicer"] = "All"
 
 st.sidebar.markdown('<div class="sidebar-kicker">CUSTOMER INTELLIGENCE</div>', unsafe_allow_html=True)
 st.sidebar.markdown("## 🎛️ Filters")
@@ -321,42 +321,35 @@ st.sidebar.markdown('<div class="sidebar-kicker">SEGMENT EXPLORER</div>', unsafe
 st.sidebar.markdown("### 🎚️ Slicers")
 st.sidebar.caption("Use these slicers to segment the dashboard. Leave blank to include everyone.")
 
-selected_gender = st.sidebar.multiselect(
+# Use single-choice dropdowns for slicers. This avoids selected-value chips
+# and their small X/clear controls, keeping the sidebar clean and consistent.
+selected_gender = st.sidebar.selectbox(
     "👤 Gender",
-    options=sorted(df["gender"].dropna().unique().tolist()),
-    default=[],
-    placeholder="All genders",
+    options=["All"] + sorted(df["gender"].dropna().unique().tolist()),
+    index=0,
     key="gender_slicer",
 )
-selected_churn = st.sidebar.multiselect(
+selected_churn = st.sidebar.selectbox(
     "📌 Churn status",
-    options=["Yes", "No"],
-    default=[],
-    placeholder="All churn statuses",
+    options=["All", "Yes", "No"],
+    index=0,
     key="churn_slicer",
 )
-selected_senior_slicer = st.sidebar.multiselect(
+selected_senior_slicer = st.sidebar.selectbox(
     "🧑‍🤝‍🧑 Senior citizen",
-    options=["Senior citizens", "Non-senior citizens"],
-    default=[],
-    placeholder="All customer profiles",
+    options=["All", "Senior citizens", "Non-senior citizens"],
+    index=0,
     key="senior_slicer",
 )
 
-if selected_gender:
-    filtered_df = filtered_df[filtered_df["gender"].isin(selected_gender)].copy()
-if selected_churn:
-    filtered_df = filtered_df[filtered_df["Churn"].isin(selected_churn)].copy()
-if selected_senior_slicer:
-    senior_mask = (
-        (filtered_df["SeniorCitizen"] == 1)
-        if "Senior citizens" in selected_senior_slicer else False
-    )
-    non_senior_mask = (
-        (filtered_df["SeniorCitizen"] == 0)
-        if "Non-senior citizens" in selected_senior_slicer else False
-    )
-    filtered_df = filtered_df[senior_mask | non_senior_mask].copy()
+if selected_gender != "All":
+    filtered_df = filtered_df[filtered_df["gender"] == selected_gender].copy()
+if selected_churn != "All":
+    filtered_df = filtered_df[filtered_df["Churn"] == selected_churn].copy()
+if selected_senior_slicer == "Senior citizens":
+    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 1].copy()
+elif selected_senior_slicer == "Non-senior citizens":
+    filtered_df = filtered_df[filtered_df["SeniorCitizen"] == 0].copy()
 
 total_customers = len(filtered_df)
 churned_customers = int((filtered_df["Churn"] == "Yes").sum())
