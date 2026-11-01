@@ -279,25 +279,22 @@ st.sidebar.markdown("**Customer & service filters**")
 st.sidebar.caption("Choose customer and service criteria below. Leave a filter empty to include all values.")
 st.sidebar.button("↺ Reset all filters", on_click=reset_filters, use_container_width=True)
 
-selected_contract = st.sidebar.multiselect(
+selected_contract = st.sidebar.selectbox(
     "Contract type",
-    options=contract_options,
-    default=[],
-    placeholder="Choose contract types",
+    options=["All"] + contract_options,
+    index=0,
     key="contract_filter",
 )
-selected_internet = st.sidebar.multiselect(
+selected_internet = st.sidebar.selectbox(
     "Internet service",
-    options=internet_options,
-    default=[],
-    placeholder="Choose internet services",
+    options=["All"] + internet_options,
+    index=0,
     key="internet_filter",
 )
-selected_payment = st.sidebar.multiselect(
+selected_payment = st.sidebar.selectbox(
     "Payment method",
-    options=payment_options,
-    default=[],
-    placeholder="Choose payment methods",
+    options=["All"] + payment_options,
+    index=0,
     key="payment_filter",
 )
 tenure_range = st.sidebar.slider(
@@ -309,12 +306,12 @@ tenure_range = st.sidebar.slider(
 )
 
 filtered_df = df.copy()
-if selected_contract:
-    filtered_df = filtered_df[filtered_df["Contract"].isin(selected_contract)].copy()
-if selected_internet:
-    filtered_df = filtered_df[filtered_df["InternetService"].isin(selected_internet)].copy()
-if selected_payment:
-    filtered_df = filtered_df[filtered_df["PaymentMethod"].isin(selected_payment)].copy()
+if selected_contract != "All":
+    filtered_df = filtered_df[filtered_df["Contract"] == selected_contract].copy()
+if selected_internet != "All":
+    filtered_df = filtered_df[filtered_df["InternetService"] == selected_internet].copy()
+if selected_payment != "All":
+    filtered_df = filtered_df[filtered_df["PaymentMethod"] == selected_payment].copy()
 filtered_df = filtered_df[
     filtered_df["tenure"].between(tenure_range[0], tenure_range[1])
 ].copy()
